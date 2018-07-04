@@ -117,35 +117,33 @@ generateSafeHTML few =
 scripts :: T.Text
 scripts = T.concat 
     [ "<script type=\"text/javascript\" async src=\"https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML\"></script>"
-    , "<link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/solarized-light.min.css\">"
     , "<script type=\"text/javascript\" src = \"https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js\"></script>"
     , "<script>hljs.initHighlightingOnLoad();</script>"
     ]
-finishedHTML :: Maybe FilePath -> T.Text -> T.Text
-finishedHTML stylesheet html
+finishedHTML :: [FilePath] -> T.Text -> T.Text
+finishedHTML stylesheets html
     = T.concat 
     [ "<!DOCTYPE html>"
     , style
     , scripts
     , html]
     where
-        style = case stylesheet of 
-                    Nothing     -> ""
-                    Just href   -> T.concat 
+        style = T.concat $ map (\href -> T.concat
                                    [ "<link rel=\"stylesheet\" href=\""
                                    , T.pack href 
-                                   , "\" type=\"text/css\" />"]
+                                   , "\" type=\"text/css\" />"])
+                            stylesheets
 
-fewToHTML :: Maybe FilePath -> Few -> T.Text
-fewToHTML css = finishedHTML css . generateSafeHTML
+fewToHTML :: [FilePath] -> Few -> T.Text
+fewToHTML csss = finishedHTML csss . generateSafeHTML
 
-writeFewAsHTML :: Maybe FilePath -> Few -> FilePath -> IO ()
-writeFewAsHTML css few output = do
-    let html = fewToHTML css few
+writeFewAsHTML :: [FilePath] -> Few -> FilePath -> IO ()
+writeFewAsHTML csss few output = do
+    let html = fewToHTML csss few
     TIO.writeFile output html
 
-convertFewFileToHTML :: Maybe FilePath -> FilePath -> FilePath -> IO ()
-convertFewFileToHTML css input output = do
+convertFewFileToHTML :: [FilePath] -> FilePath -> FilePath -> IO ()
+convertFewFileToHTML csss input output = do
     few <- parseFile input
-    writeFewAsHTML css few output
+    writeFewAsHTML csss few output
 

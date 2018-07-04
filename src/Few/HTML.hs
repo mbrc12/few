@@ -1,4 +1,4 @@
-{-# LANGUAGE OverloadedStrings, RecordWildCards, MultiWayIf #-}
+{-# LANGUAGE OverloadedStrings, RecordWildCards, MultiWayIf, ViewPatterns #-}
 
 module Few.HTML
     ( fewToHTML
@@ -146,4 +146,18 @@ convertFewFileToHTML :: [FilePath] -> FilePath -> FilePath -> IO ()
 convertFewFileToHTML csss input output = do
     few <- parseFile input
     writeFewAsHTML csss few output
+
+
+variableReplace :: [Variable] -> T.Text -> T.Text
+variableReplace var html = foldl' (flip ($)) html $ 
+                                     map (\(T.pack -> a, T.pack -> b) -> T.replace a b) var
+
+compileForYew :: [FilePath] -> [Variable] -> FilePath -> FilePath -> IO ()
+compileForYew csss var input output = do
+    few <- parseFile input
+    let html  = fewToHTML csss few
+        html' = variableReplace var html
+
+    TIO.writeFile output html'
+
 

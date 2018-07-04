@@ -7,6 +7,7 @@ module Few.Types
     , Opening (..)
     , Ending (..)
     , AttrName (..)
+    , Variable (..)
     ) where
  
 ----------------------------------------
@@ -16,6 +17,8 @@ module Few.Types
 
 type Opening = String
 type Ending  = String
+
+type Variable = (String, String)
 
 data NodeType 
     = FewContent

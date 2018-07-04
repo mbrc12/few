@@ -2,3 +2,5 @@
 few.cabal
 *~
 tests/
+.*.swp
+.*.swo

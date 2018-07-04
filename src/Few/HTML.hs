@@ -4,6 +4,7 @@ module Few.HTML
     ( fewToHTML
     , writeFewAsHTML
     , convertFewFileToHTML
+    , compileForYew
     ) where
 
 ----------------------------------------
